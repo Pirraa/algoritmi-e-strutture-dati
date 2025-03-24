@@ -20,7 +20,7 @@ def plot_graph(sizes, elapsed_times):
     plt.plot(sizes, elapsed_times, marker='o', color='b')
     plt.xlabel('Size')
     plt.ylabel('Elapsed Time (seconds)')
-    plt.title('Performance of Insertion Sort')
+    plt.title('Performance of Hybrid Sort')
     plt.grid(True)
     plt.show()
 

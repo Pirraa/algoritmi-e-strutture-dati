@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#define HYBRID_MERGESORT_K 110
 
 /**
  * Parametri di un esperimento.
@@ -45,23 +46,60 @@ void init(struct configuration* config) {
     // TODO: controllare che i valori inseriti siano sensati
 }
 
-/**
- * TODO: Scrivere logica di insertion sort 
- */
-void insertion_sort(int *arr, int start, int end) {
-    for (int i = start + 1; i < end; i++) {
-        int key = arr[i];
-        int j = i - 1;
-
-        // Muove gli elementi di arr[0..i-1] che sono maggiori di key,
-        // una posizione a destra per fare spazio a key.
-        while (j >= start && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j = j - 1;
+void merge(int arr[],int start,int mid,int end)
+{
+    //ar[start:mid] e arr[mid+1:end] sono ordinati
+    //posso comporli in un unico array ordinato
+    //mantenendo un indice indipendente per ciascuna metà
+    int n1=mid-start+1;
+    int n2=end-mid;
+    int L[n1];
+    int R[n2];
+    for(int i=0;i<n1;i++) L[i]=arr[start+i];
+    for(int j=0;j<n2;j++) R[j]=arr[mid+j+1];
+    int i=0;
+    int j=0;
+    for(int k=start;k<=end;k++)
+    {
+        if(i<n1)
+        {
+            if(j<n2)
+            {
+                if(L[i]<=R[j])
+                {
+                    arr[k]=L[i];
+                    i++;
+                }else
+                {
+                    arr[k]=R[j];
+                    j++;
+                }
+            }else
+            {
+                arr[k]=L[i];
+                i++;
+            }
+        }else
+        {
+            arr[k]=R[j];
+            j++;
         }
-        arr[j + 1] = key;
     }
 }
+
+void merge_sort(int arr[],int start,int end)
+{
+    //se l'array contiene almeno due elementi richiama ricorsivamente sulle due metà
+    //dopo la chiamata, le due metà sono ordinate e possono essere unite con merge
+    if(start<end)
+    {
+        int mid=start+(end-start)/2;
+        merge_sort(arr,start,mid);
+        merge_sort(arr,mid+1,end);
+        merge(arr,start,mid,end);
+    }
+}
+
 
 /**
     TODO: scrivi la funzione antagonista che controlla
@@ -96,10 +134,10 @@ double run(int size, int repetitions) {
 
         clock_t start, end;
         start = clock();
-        insertion_sort(arr, 0, size);
+        merge_sort(arr, 0, size-1);
         end = clock();
 
-        if (!check(arr, 0, size)) {
+        if (!check(arr, 0, size-1)) {
            printf("ERRORE ERRORE GRAVE GRAVE");
            return 1;
         }          
@@ -125,12 +163,7 @@ double run(int size, int repetitions) {
  */
 void run_experiments(struct configuration config)
 {
-    FILE *file = fopen("experiment_results.csv", "w");
-    if(file==NULL)
-    {
-        printf("Errore apertra\n");
-        exit(1);
-    }
+    FILE *file = fopen("merge.csv", "w");
     // l'iteratore `i` scorre sulle varia dimensioni;
     // essenzialmente è "un'indice che si focalizza su una x precisa
     // del plot che disegneremo";
@@ -147,11 +180,7 @@ void run_experiments(struct configuration config)
         printf("%g\n", elapsed_time);
         fprintf(file, "%d,%g\n", i, elapsed_time);
     }
-    if(fclose(file)!=0)
-    {
-        printf("Errore chiusura\n");
-        exit(1);
-    }
+    fclose(file);
 }
 
 int main(void) 

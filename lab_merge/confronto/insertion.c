@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define HYBRID_MERGESORT_K 110
 
 /**
  * Parametri di un esperimento.
@@ -50,7 +49,7 @@ void init(struct configuration* config) {
  * TODO: Scrivere logica di insertion sort 
  */
 void insertion_sort(int *arr, int start, int end) {
-    for (int i = start + 1; i <= end; i++) {
+    for (int i = start + 1; i < end; i++) {
         int key = arr[i];
         int j = i - 1;
 
@@ -64,90 +63,6 @@ void insertion_sort(int *arr, int start, int end) {
     }
 }
 
-void merge(int arr[],int start,int mid,int end)
-{
-    //ar[start:mid] e arr[mid+1:end] sono ordinati
-    //posso comporli in un unico array ordinato
-    //mantenendo un indice indipendente per ciascuna metà
-    int n1=mid-start+1;
-    int n2=end-mid;
-    int L[n1];
-    int R[n2];
-    for(int i=0;i<n1;i++) L[i]=arr[start+i];
-    for(int j=0;j<n2;j++) R[j]=arr[mid+j+1];
-    int i=0;
-    int j=0;
-    for(int k=start;k<=end;k++)
-    {
-        if(i<n1)
-        {
-            if(j<n2)
-            {
-                if(L[i]<=R[j])
-                {
-                    arr[k]=L[i];
-                    i++;
-                }else
-                {
-                    arr[k]=R[j];
-                    j++;
-                }
-            }else
-            {
-                arr[k]=L[i];
-                i++;
-            }
-        }else
-        {
-            arr[k]=R[j];
-            j++;
-        }
-    }
-}
-
-void merge_sort(int arr[],int start,int end)
-{
-    //se l'array contiene almeno due elementi richiama ricorsivamente sulle due metà
-    //dopo la chiamata, le due metà sono ordinate e possono essere unite con merge
-    if(start<end)
-    {
-        int mid=start+(end-start)/2;
-        merge_sort(arr,start,mid);
-        merge_sort(arr,mid+1,end);
-        merge(arr,start,mid,end);
-    }
-}
-
-
-void hybrid_sort(int *arr,int start,int end)
-{
-    //se l'array contiene più di k elementi richiama ricorsivamente sulle due metà
-    //dopo la chamata, le due metà sono ordinate e possono essere unite con merge
-    //altrimenti ordina con insertion_sort 
-    if(end-start>HYBRID_MERGESORT_K)
-    {
-        if(start<end)
-        {
-            int mid=start+(end-start)/2;
-            hybrid_sort(arr,start,mid);
-            hybrid_sort(arr,mid+1,end);
-            merge(arr,start,mid,end);
-        }
-    }else{
-        insertion_sort(arr,start,end);
-    }
-}
-
-void hybrid_merge_sort(int *arr, int start, int end) {
-    if (end-start > HYBRID_MERGESORT_K) {
-        int mid = start + (end-start) / 2;
-        hybrid_merge_sort(arr, start, mid);
-        hybrid_merge_sort(arr, mid+1, end);
-        merge(arr, start, mid, end);
-    } else {
-        insertion_sort(arr, start, end);
-    }
-}
 /**
     TODO: scrivi la funzione antagonista che controlla
     se un array `arr` è ordinato tra `start` ed `end`.
@@ -181,10 +96,10 @@ double run(int size, int repetitions) {
 
         clock_t start, end;
         start = clock();
-        hybrid_merge_sort(arr, 0, size-1);
+        insertion_sort(arr, 0, size);
         end = clock();
 
-        if (!check(arr, 0, size-1)) {
+        if (!check(arr, 0, size)) {
            printf("ERRORE ERRORE GRAVE GRAVE");
            return 1;
         }          
@@ -210,7 +125,12 @@ double run(int size, int repetitions) {
  */
 void run_experiments(struct configuration config)
 {
-    FILE *file = fopen("experiment_results.csv", "w");
+    FILE *file = fopen("insertion.csv", "w");
+    if(file==NULL)
+    {
+        printf("Errore apertra\n");
+        exit(1);
+    }
     // l'iteratore `i` scorre sulle varia dimensioni;
     // essenzialmente è "un'indice che si focalizza su una x precisa
     // del plot che disegneremo";
@@ -227,7 +147,11 @@ void run_experiments(struct configuration config)
         printf("%g\n", elapsed_time);
         fprintf(file, "%d,%g\n", i, elapsed_time);
     }
-    fclose(file);
+    if(fclose(file)!=0)
+    {
+        printf("Errore chiusura\n");
+        exit(1);
+    }
 }
 
 int main(void) 
