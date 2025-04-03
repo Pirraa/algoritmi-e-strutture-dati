@@ -60,8 +60,8 @@ void init(struct configuration* config) {
     printf("Inserire seed (ad esempio, 362372): ");
     scanf("%d", &config->seed);
 
-    int n_algorithms = 4;
-    char *algos[] = {"INSERTION", "MERGE", "HYBRIDMERGE","QUICK"};
+    int n_algorithms = 6;
+    char *algos[] = {"MERGE", "HYBRIDMERGE","QUICK","MOTQUICK","NAIVETAILQUICK","TAILQUICK"};
 
     config->n_algorithms = n_algorithms;
     for (int algo_idx=0; algo_idx<n_algorithms; algo_idx++) {
@@ -181,7 +181,6 @@ void quick(int *arr,int start,int end)
     }
 }
 
-//nell'altro file le 3 funzioni per mot_quick
 int median_of_three(int *arr, int a, int b, int c) {
     if (arr[a] > arr[b]) {
         if (arr[b] > arr[c])      return b;
@@ -215,6 +214,34 @@ void mot_quick_sort(int *arr, int start, int end) {
     }
 }
 
+void naive_tail_quick_sort(int *arr,int start,int end)
+{
+    while(start<end)
+    {
+        int pivot=mot_partition(arr,start,end);
+        naive_tail_quick_sort(arr,start,pivot-1);
+        start=pivot+1;
+    }
+}
+
+void tail_quick_sort(int *arr,int start,int end)
+{
+    while(start<end)
+    {
+        int pivot=mot_partition(arr,start,end);
+        //se parte sinistra più lunga della parte destra
+        if(pivot-start>end-pivot)
+        {
+            tail_quick_sort(arr,start,pivot-1);
+            start=pivot+1;
+        }else{
+            //se parte destra più lunga della parte sinistra
+            tail_quick_sort(arr,pivot+1,end);
+            end=pivot-1;
+        }
+    }
+}
+
 /**
     Funzione antagonista che controlla se un array `arr` di dimensione `size` è ordinato.
 */
@@ -245,6 +272,12 @@ algo_ptr select_algorithm(char *algo_name) {
         return &hybrid_merge_sort;
     } else if(strcmp(algo_name, "QUICK") == 0) {
         return &quick;
+    } else if(strcmp(algo_name, "MOTQUICK") == 0) {
+        return &mot_quick_sort;
+    } else if(strcmp(algo_name, "NAIVETAILQUICK") == 0) {
+        return &naive_tail_quick_sort;
+    } else if(strcmp(algo_name, "TAILQUICK") == 0) {
+        return &tail_quick_sort;
     } else {
         printf("Errore - l'algoritmo selezionato non è disponibile.");
         exit(-1);
