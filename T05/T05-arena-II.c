@@ -50,8 +50,11 @@ void handle_at_operator() {
 void handle_hash_operator() {
     int b = pop();
     int a = pop();
-    push(b);
-    push(a);
+    int result = 1;
+    for (int i = 0; i < a; i++) {
+        result *= b;
+    }
+    push(result);
 }
 
 // Funzione per gestire l'operatore '$'

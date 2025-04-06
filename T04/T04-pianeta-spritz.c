@@ -72,7 +72,10 @@ int binary_search(double *distance, int N, double radius) {
 
 void pianeta_spritz(FILE *in_file, FILE *out_file) {
     int N, Q;
-    fscanf(in_file, "%d %d", &N, &Q);
+    if (fscanf(in_file, "%d %d", &N, &Q) != 2) {
+        fprintf(stderr, "Error reading N and Q from input file.\n");
+        exit(EXIT_FAILURE);
+    }
     
     double distance[N];
 
@@ -80,7 +83,10 @@ void pianeta_spritz(FILE *in_file, FILE *out_file) {
     // attenzione, ogni coordinata può essere fino a 2^30 quindi usare int non ci basta.
     for (size_t i=0; i<N; i++) {
         long long int x,y,z;
-        fscanf(in_file, "%lld %lld %lld", &x, &y, &z);
+        if (fscanf(in_file, "%lld %lld %lld", &x, &y, &z) != 3) {
+            fprintf(stderr, "Error reading coordinates from input file.\n");
+            exit(EXIT_FAILURE);
+        }
         distance[i] = sqrt(x*x + y*y + z*z);
     }
 
@@ -91,7 +97,10 @@ void pianeta_spritz(FILE *in_file, FILE *out_file) {
     // rispondi ad ogni query con una binary search
     for (int i=0; i<Q; i++) {
         int query;
-        fscanf(in_file, "%d", &query);
+        if (fscanf(in_file, "%d", &query) != 1) {
+            fprintf(stderr, "Error reading query from input file.\n");
+            exit(EXIT_FAILURE);
+        }
         fprintf(out_file, "%d\n", binary_search(distance, N, (double)query));
     }
 }
