@@ -12,8 +12,8 @@ int fast_expo(int base, int exp)
     if (exp == 1)
         return base;
 
-    int t = fast_expo(base, exp/2);
-    t = (t*t) % mod;
+    int t = fast_expo(base, exp / 2);
+    t = (t * t) % mod;
 
     if (exp % 2)
         return t;
@@ -23,10 +23,10 @@ int fast_expo(int base, int exp)
 
 int main(void)
 {
-    FILE* in_file;
-    FILE* out_file;
+    FILE *in_file;
+    FILE *out_file;
     in_file = fopen("input.txt", "r");
-    out_file = fopen("output.txt", "r");
+    out_file = fopen("output.txt", "w");  // 'w' mode to write, not 'r' which is for reading
 
     if (in_file == NULL || out_file == NULL) {
         return -1;
@@ -34,13 +34,24 @@ int main(void)
 
     // Inizio logica principale del problema 
     int N;
-    fscanf(in_file, "%d", &N);
-    while(N > 0) {
+    if (fscanf(in_file, "%d", &N) != 1) {  // Check that the fscanf was successful
+        return -1;
+    }
+
+    while (N > 0) {
         int base, exp;
-        fscanf(in_file, "%d %d", &base, &exp);
-        fscanf(out_file, "%d", fast_expo(base, exp));
+        if (fscanf(in_file, "%d %d", &base, &exp) != 2) {  // Check both values
+            return -1;
+        }
+        
+        int result = fast_expo(base, exp);  // Store the result of fast_expo
+        if (fprintf(out_file, "%d\n", result) < 0) {  // Write the result to the output file
+            return -1;
+        }
+
         N--;
     }
+
     // Fine
 
     if (fclose(in_file) != 0 || fclose(out_file) != 0) {

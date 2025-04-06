@@ -1,15 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void insertionSort(int numeri[])
-{
-    for (int i = 1; i < 4; i++)
-    {
+void insertionSort(int numeri[]) {
+    for (int i = 1; i < 4; i++) {
         int key = numeri[i];
         int j = i - 1;
 
-        while ((j >= 0) && (numeri[j] > key))
-        {
+        while ((j >= 0) && (numeri[j] > key)) {
             numeri[j + 1] = numeri[j];
             j = j - 1;
         }
@@ -17,18 +14,15 @@ void insertionSort(int numeri[])
     }
 }
 
-int kaprekar(int numero)
-{
+int kaprekar(int numero) {
     int primo_numero = 0;
     int secondo_numero = 0;
     int counter = 0;
 
-    do
-    {
+    do {
         int numbers[4];
 
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             numbers[i] = numero % 10;
             numero = numero / 10;
         }
@@ -47,24 +41,31 @@ int kaprekar(int numero)
     return counter;
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
     FILE *input, *output;
 
     input = fopen("input.txt", "r");
     output = fopen("output.txt", "w");
 
-    int n = 0;
-    fscanf(input, "%d", &n);
+    if (input == NULL || output == NULL) {
+        return -1;  // Error opening files
+    }
 
-    for (int i = 0; i < n; i++)
-    {
+    int n = 0;
+    if (fscanf(input, "%d", &n) != 1) {
+        return -1;  // Error reading n
+    }
+
+    for (int i = 0; i < n; i++) {
         int numero = 0;
-        fscanf(input, "%d", &numero);
+        if (fscanf(input, "%d", &numero) != 1) {
+            return -1;  // Error reading number
+        }
 
         int n_cicli = kaprekar(numero);
 
-        printf("Numero di cicli: %d\n", n_cicli);
+        // Scrive il risultato nel file di output
+        fprintf(output, "%d\n", n_cicli);
     }
 
     fclose(input);
