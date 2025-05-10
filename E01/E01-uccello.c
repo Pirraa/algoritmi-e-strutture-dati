@@ -13,7 +13,7 @@ int min(int a, int b, int c)
     return c;
 }
 
-int levenshtein_distance(char *sequenza_ricercatori, char *sequenza_database)
+int levenshtein_distance(char *sequenza_ricercatori, char *sequenza_database,int len1,int len2)
 {
     indice++;
     // printf("=============================================\n\t%d\n", indice);
@@ -21,8 +21,8 @@ int levenshtein_distance(char *sequenza_ricercatori, char *sequenza_database)
     // printf("Ricerca:\t%s\n", sequenza_ricercatori);
     // printf("Database:\t%s\n", sequenza_database);
 
-    int len_r = strlen(sequenza_ricercatori);
-    int len_d = strlen(sequenza_database);
+    int len_r = len1;
+    int len_d = len2;
 
     int dp[len_r + 1][len_d + 1];
 
@@ -76,69 +76,87 @@ int main(int argc, char **argv)
     if (result != 1)
     {
         printf("[Errore]: Lettura numero di righe.");
+        fclose(input);
+        fclose(output);
         exit(1);
     }
 
     if (n <= 0)
     {
         printf("[Errore]: Numero di righe da leggere errato.");
+        fclose(input);
+        fclose(output);
         exit(1);
     }
 
-    int m = 0;
+    int len1 = 0;
 
-    result = fscanf(input, "%d", &m);
+    result = fscanf(input, "%d", &len1);
 
     if (result != 1)
     {
         printf("[Errore]: Lettura del numero della sequenza dei ricercatori.");
+        fclose(input);
+        fclose(output);
         exit(1);
     }
 
-    char *sequenza_ricercatori = (char *)malloc(m * sizeof(char));
+    char *sequenza_ricercatori = (char *)malloc(len1 * sizeof(char) + 1);
 
     result = fscanf(input, "%s", sequenza_ricercatori);
 
     if (result != 1)
     {
         printf("[Errore]: Lettura della sequenza dei ricercatori.");
+        fclose(input);
+        fclose(output);
+        free(sequenza_ricercatori);
         exit(1);
     }
 
-    int min = __INT_MAX__;
+    int min = -1;
     int result_levenshtein_distance = 0;
 
     for (int i = 0; i < n; i++)
     {
-        int m = 0;
+        int len2 = 0;
 
-        result = fscanf(input, "%d", &m);
+        result = fscanf(input, "%d", &len2);
 
         if (result != 1)
         {
             printf("[Errore]: Lettura del numero della sequenza del database.");
+            fclose(input);
+            fclose(output);
+            free(sequenza_ricercatori);
             exit(1);
         }
 
-        char *sequenza_database = (char *)malloc(m * sizeof(char));
+        char *sequenza_database = (char *)malloc(len2 * sizeof(char) + 1);
 
         result = fscanf(input, "%s", sequenza_database);
 
         if (result != 1)
         {
             printf("[Errore]: Lettura della sequenza del database.");
+            fclose(input);
+            fclose(output);
+            free(sequenza_ricercatori);
+            free(sequenza_database);
             exit(1);
         }
 
-        result_levenshtein_distance = levenshtein_distance(sequenza_ricercatori, sequenza_database);
+        result_levenshtein_distance = levenshtein_distance(sequenza_ricercatori, sequenza_database,len1,len2);
 
-        if (result_levenshtein_distance < min)
+        if (min == -1 || result_levenshtein_distance < min)
         {
             min = result_levenshtein_distance;
         }
+        free(sequenza_database);
     }
 
     fprintf(output, "%d", min);
+    free(sequenza_ricercatori);
 
     if (fclose(input) != 0)
     {
