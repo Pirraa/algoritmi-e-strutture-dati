@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/francesco/algoritmi/lab_merge",
-      "program": "/home/francesco/algoritmi/lab_merge/hybrid",
+      "cwd": "/home/francesco/algoritmi/E02",
+      "program": "/home/francesco/algoritmi/E02/a.out",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
