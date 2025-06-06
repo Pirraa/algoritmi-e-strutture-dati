@@ -57,6 +57,7 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "SEGMENT_TREE.C": "cpp"
+    "SEGMENT_TREE.C": "cpp",
+    "e04-2.C": "cpp"
   }
 }

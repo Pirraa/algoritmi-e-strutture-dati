@@ -181,7 +181,7 @@ double run(int size, int repetitions) {
 
         clock_t start, end;
         start = clock();
-        hybrid_merge_sort(arr, 0, size-1);
+        merge_sort(arr, 0, size-1);
         end = clock();
 
         if (!check(arr, 0, size-1)) {
